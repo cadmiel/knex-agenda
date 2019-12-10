@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-const { user } = require('./routes/user')
 const { routers } = require('./routes')
 
 const init = (knex) => {
@@ -22,8 +21,7 @@ const init = (knex) => {
     app.use(...routers({ knex }))
 
     app.get('/', (req, res) => {
-        name = 'cadmiel jorge'
-        res.render('home', { name })
+        res.render('home')
     })
 
     return app
