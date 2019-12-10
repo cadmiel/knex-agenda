@@ -2,10 +2,11 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
-const { routers } = require('./routes')
+const { routers } = require('./src/routes')
+const methodOverride = require('method-override')
 
 const init = (knex) => {
-    app.set('views', path.join(__dirname, 'views'))
+    app.set('views', path.join(__dirname, 'src/views'))
     app.set('view engine', 'ejs')
 
     app.use((req, res, next) =>{
@@ -15,6 +16,7 @@ const init = (knex) => {
         next()
     })
 
+    app.use(methodOverride('_method'))
     app.use(express.static(path.join(__dirname, 'public')))
     app.use(bodyParser.urlencoded({ extended: false }))
 

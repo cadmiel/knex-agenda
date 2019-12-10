@@ -1,10 +1,10 @@
 const { userRouter } = require('./user')
-const { contactRouter } = require('./contact')
+const { authRouter } = require('./auth')
 
 const routers = (dependency) => {
     return [
         userRouter(dependency),
-        contactRouter(dependency),
+        authRouter(dependency),
     ]
 }
 

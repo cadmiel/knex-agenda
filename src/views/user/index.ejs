@@ -1,0 +1,58 @@
+<%- include ('../partials/header.ejs') %>
+
+<div class="panel-heading">
+    <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li><a class="active">Usuários</a></li>
+    </ol>
+</div>
+
+<div class="panel-body">
+
+    <div class="row">
+        <div class="col-lg-12 text-right">
+            <div>
+                <a href="/user" class="btn btn-success" title="Cadastrar novo usuário">
+                    <i class="fa fa-fw fa-pencil"></i> Novo
+                </a>
+            </div>
+        </div>
+    </div>
+    <hr style="margin: 5px 0px 5px 0px;">
+
+    <table class="table table-curved table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Sobrenome</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach((user, key) => { %>
+            <tr>
+                <th scope="row"><%= user.id %></th>
+                <td><%= user.name %></td>
+                <td><%= user.last_name %></td>
+                <td><%= user.email %></td>
+                <td>
+                    <a href="<%= user.id %>" class="btn btn-success btn-xs" title="Visualizar detalhes do usuário">
+                        <i class="fa fa-fw fa-pencil"></i> visualizar
+                    </a>
+                    <a href="/user/<%= user.id %>" class="btn btn-primary btn-xs" title="Editar dados do usuário">
+                        <i class="fa fa-fw fa-pencil"></i> editar
+                    </a>
+                    <a href="/user/<%= user.id %>/delete" class="btn btn-danger btn-xs" title="Remover usuário">
+                        <i class="fa fa-fw fa-remove"></i> remover
+                    </a>
+                </td>
+            </tr>
+            <% }) %>
+
+        </tbody>
+    </table>
+</div>
+
+<%- include('../partials/footer') %>

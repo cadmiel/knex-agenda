@@ -19,7 +19,7 @@ const findById = async (knex, id) => {
 const save = async (knex, data, id) => {
     return new Promise((resolve, reject) => {
         const criterion = knex('users')
-
+        
         if (id) {
             criterion.where({ 'id': id }).update(data)
         } else {
