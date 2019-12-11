@@ -9,7 +9,7 @@ const init = (knex) => {
     app.set('views', path.join(__dirname, 'src/views'))
     app.set('view engine', 'ejs')
 
-    app.use((req, res, next) =>{
+    app.use((req, res, next) => {
         res.locals = {
             name: 'Cadmiel Jorge'
         }
@@ -20,7 +20,7 @@ const init = (knex) => {
     app.use(express.static(path.join(__dirname, 'public')))
     app.use(bodyParser.urlencoded({ extended: false }))
 
-    app.use(...routers({ knex }))
+    app.use(...routers(knex))
 
     app.get('/', (req, res) => {
         res.render('home')

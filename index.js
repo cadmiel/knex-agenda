@@ -1,7 +1,11 @@
 
 const dotenv = require('dotenv')
-dotenv.config()
+const mongoose = require('mongoose')
+const { logModel } = require('./src/schemas/log')
+mongoose.Promise = global.Promise
 const port = process.env.PORT | 3000
+const mongodb = process.env.MONGO_DB || 'mongodb://localhost:27017/knex'
+dotenv.config()
 
 const knex = require('knex')({
   client: process.env.DB_CONNECTION,
@@ -13,12 +17,17 @@ const knex = require('knex')({
   }
 })
 
-const app = require('./app')(knex)
+mongoose.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
 
-knex.on('query', (query) => {
-  console.log(query.sql)
-})
+    const app = require('./app')({ knex, logModel })
 
-app.listen(port, () => {
-  console.log(`servidor rodando na porta ${port}`)
-})
+    knex.on('query', (query) => {
+      console.log(query.sql)
+    })
+
+    app.listen(port, () => {
+      console.log(`servidor rodando na porta ${port}`)
+    })
+  })
+

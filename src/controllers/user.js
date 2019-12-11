@@ -5,7 +5,7 @@ const resetForm = () => { return { action:'/user',  method:'POST', user: {}} }
 const findAll = async ({ knex }, req, res) => {
 
     let users = {}
-
+    
     try {
         users = await user.findAll(knex) 
     } catch (error) {
@@ -57,7 +57,7 @@ const save = async ({ knex }, req, res) => {
         console.log('erro', error)
     }
     
-    res.render('users', { users })
+    res.render('users')
 }
 
 module.exports = {
