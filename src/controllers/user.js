@@ -51,13 +51,14 @@ const save = async ({ knex }, req, res) => {
     try {
         data =  req.body
         delete data._method
+        
         await user.save(knex, data, req.params.id) 
         res.redirect('/users')
     } catch (error) {
         console.log('erro', error)
     }
-    
-    res.render('users')
+    res.send('erro')
+    res.render('user',{users:[]})
 }
 
 module.exports = {

@@ -1,5 +1,48 @@
 <script src="/jquery-3.4.1.slim.min.js"></script>
 <script src="/bootstrap.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    
+    
+ chats = (data) => {
+    return `
+    <a href="#" class="list-group-item ">
+                <p class="list-group-item-text">${data.msg}</p>
+                <span class="small">Cadmiel Jorge | data: ${data.date}</span>
+            </a>
+    `
+ }  
+
+$(function(){
+
+    const socket = io()
+
+    $('.rooms').on('click','a', function() {
+        $('.rooms a').each((k,v) =>{
+            if(k > 0) {
+                $(v).removeClass('active')
+            }
+        })
+        
+        $('.room').text($(this).find('.info-rom').text())
+        $(this).addClass('active')
+    })
+
+    $('.form-room').submit(function(){
+        let msg = $('#message').val()
+        let date = new Date()
+        console.log(socket.id)
+        socket.emit('sendMsg', {id:socket.id,msg,date})
+        return false;
+    })
+
+    socket.on('listMSG', data => {
+        $('.chats').append(chats(data))
+        console.log('cheguei,'+data )
+    })
+})
+
+</script>
 </body>
 
 </div>
