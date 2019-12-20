@@ -9,6 +9,7 @@ const methodOverride = require('method-override')
 const session = require('express-session')
 const sharedSession = require('express-socket.io-session')
 const redis = require('socket.io-redis')
+const { chatModel } = require('./src/schemas/chat')
 
 io.adapter(redis(
     {
@@ -25,12 +26,32 @@ io.adapter(redis(
 io.on('connection', socket => {
     // console.log('usuário conectado', socket.id)
     // console.log('sessão socket', socket.handshake.session)
-    socket.on('sendMsg', msg => {
+    socket.on('sendMsg', data => {
         // console.log(msg)
-        // socket.join(msg)
-        console.log(socket.adapter.rooms)
-        io.emit('listMSG', msg)
+        chat = new chatModel({
+            user_name: data.user_name,
+            message: data.message,
+            room: data.roomSelected,
+            created_at: data.created_at
+        })
+        chat.save()
+        io.to(data.roomSelected).emit('listMSG', data)
     })
+
+    socket.on('roomSelected', roomSelected => {
+        socket.join(roomSelected)
+        // console.log(socket.adapter.rooms)
+    })
+
+    socket.on('viewAllMsg', roomSelected => {
+
+        chatModel.find({room:roomSelected}, function (err, chats) {
+            io.to(roomSelected).emit('sendAllMsg', chats) 
+          });
+
+    
+    })
+
 })
 
 const init = (knex) => {

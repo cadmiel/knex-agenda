@@ -2,45 +2,72 @@
 <script src="/bootstrap.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    
-    
- chats = (data) => {
-    return `
+
+
+    chats = (data) => {
+        return `
     <a href="#" class="list-group-item ">
-                <p class="list-group-item-text">${data.msg}</p>
-                <span class="small">Cadmiel Jorge | data: ${data.date}</span>
+                <p class="list-group-item-text">${data.message}</p>
+                <span class="small">${data.user_name} | data: ${data.created_at}</span>
             </a>
     `
- }  
+    }
 
-$(function(){
+    $(function () {
 
-    const socket = io()
+        const socket = io()
 
-    $('.rooms').on('click','a', function() {
-        $('.rooms a').each((k,v) =>{
-            if(k > 0) {
-                $(v).removeClass('active')
-            }
+        $('.list-msg').fadeOut('show');
+
+        let roomSelected = false;
+
+        $('.rooms').on('click', 'a', function () {
+            $('.rooms a').each((k, v) => {
+                if (k > 0) {
+                    $(v).removeClass('active')
+                }
+            })
+
+            $('.room').text($(this).find('.info-rom').text())
+            $(this).addClass('active')
+            $('.list-msg').fadeIn('show');
+            roomSelected = $(this).data('id')
+            socket.emit('roomSelected', roomSelected)
+            $('.chats').html('')
+            $('.rooms').find(`#${roomSelected}`).find('.qtd-msg').html(0)
+            socket.emit('viewAllMsg', roomSelected)
         })
-        
-        $('.room').text($(this).find('.info-rom').text())
-        $(this).addClass('active')
-    })
 
-    $('.form-room').submit(function(){
-        let msg = $('#message').val()
-        let date = new Date()
-        console.log(socket.id)
-        socket.emit('sendMsg', {id:socket.id,msg,date})
-        return false;
-    })
+        socket.on('sendAllMsg', data => {
+            // console.log('msgs', data)
+            data.forEach((v, k) => {
+                $('.chats').append(chats({ message: v.message, created_at: v.created_at, user_name: v.user_name }))
+            })
+        })
 
-    socket.on('listMSG', data => {
-        $('.chats').append(chats(data))
-        console.log('cheguei,'+data )
+        $('.form-room').submit(function () {
+            let message = $('#message').val()
+            let created_at = new Date()
+            socket.emit('sendMsg', { id: socket.id, message, created_at, roomSelected, user_name: 'Cod' })
+            $('#message').val('')
+            return false;
+        })
+
+        socket.on('listMSG', data => {
+
+            qtdMsg = $('.rooms').find(`#${data.roomSelected}`).find('.qtd-msg').html()
+
+            if (data.roomSelected != roomSelected) {
+                qtdMsg++
+            }
+
+            if (data.roomSelected == roomSelected) {
+                $('.chats').append(chats(data))
+            }
+            $('.rooms').find(`#${data.roomSelected}`).find('.qtd-msg').html(qtdMsg)
+
+        })
     })
-})
 
 </script>
 </body>
